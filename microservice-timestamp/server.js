@@ -17,32 +17,28 @@ let response = {
 }
 
 app.get("/api",(req,res) => {
-  var dateNow = Date.now();
-  var date = new dateHandler(dateNow);
-  response.unix = new Date(parseInt(dateNow)).getTime();
-  response.utc = date.convertUnixToDate();
-  res.json(response);    
-  
+  const dateNow = Date.now();
+  const date = new dateHandler(dateNow);
+  const {unix, utc} = date.getUnixAndUTC();
+  response.unix = unix;
+  response.utc = utc;
+  return res.json(response);    
 })
 
 app.get("/api/:timestamp", (req,res) => {
-  var timestamp = req.params.timestamp;
-  var date = new dateHandler(timestamp);
-  
-  if(date.isValidUnix()){
-    response.unix = new Date(parseInt(timestamp)).getTime();
-    response.utc = date.convertUnixToDate();
-    res.json(response);
-  }
-  else if(date.isValidDate()){
-    response.unix = Date.parse(timestamp);
-    response.utc = date.convertDateToUtc();
-    res.json(response);
-  }
-  else{
-    res.json({"error":"Invalid Date"});
+  const timestamp = req.params.timestamp;
+  const date = new dateHandler(timestamp);
+
+  const { unix, utc } = date.getUnixAndUTC();
+
+  if(unix == 'Invalid Date' || utc == 'Invalid Date'){
+    return res.json({"error":"Invalid Date"});
   }
 
+  response.unix = unix;
+  response.utc = utc;
+
+  return res.json(response);
 })
 
 var listener = app.listen(process.env.PORT, function () {

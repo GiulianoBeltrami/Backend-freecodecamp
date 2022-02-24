@@ -1,30 +1,32 @@
-const moment = require('moment');
-
-class DateHandler{
-  constructor(date){
+class DateHandler {
+  constructor(date) {
     this.date = date;
   }
 
-  isValidUnix(){
-    return moment(this.date,'X',true).isValid();
+  isNumber() {
+    return /^\d+$/.test(this.date);
   }
-  
-  isValidDate(){
-    return moment(this.date,'YYYY-MM-DD',true).isValid();
-  }
-  
-  convertUnixToDate(){
-    return new Date(parseInt(this.date)).toUTCString();
-  }
-  
-  convertDateToUnix(){
+
+  getUnix() {
+    if (this.isNumber()) {
+      return new Date(parseInt(this.date)).getTime();
+    }
     return new Date(this.date).getTime();
   }
 
-  convertDateToUtc(){
+  getUTC() {
+    if (this.isNumber()) {
+      return new Date(parseInt(this.date)).toUTCString();
+    }
     return new Date(this.date).toUTCString();
   }
-  
+
+  getUnixAndUTC() {
+    return {
+      unix: this.getUnix(),
+      utc: this.getUTC()
+    }
+  }
 }
 
 module.exports = DateHandler;
