@@ -1,16 +1,21 @@
-const express = require('express');
-const router = express.Router();
-const User = require('../models/UserModel');
+const mongoose = require('mongoose');
+const userModel = require('../models/UserModel.js');
 
-router.post('/users', (req, res) => {
+exports.CreateUser = (req, res) => {
     const { username } = req.body;
-    let user = User.Find(username);
-    if (user) {
-        return res.send(user);
-    }
-    user =  User.Create(username);
-    return res.send(user);
-});
+    userModel.create({ username: username })
+        .then(user => {
+            res.json({
+                "username": user.username ,
+                "_id": user._id
+            });
+        })
+        .catch(err => {
+            console.error(err);
+        })
+}
 
+exports.CreateExercise = (req, res) => {
+    
+}
 
-module.exports = router;
